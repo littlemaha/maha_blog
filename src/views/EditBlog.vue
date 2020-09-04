@@ -4,9 +4,6 @@
 			<div class="gong-ju-lan">
 				<h2 class="big-blog" @click="WenZiGongJu">文字</h2>
 				<h2 class="big-blog" @click="ImgGongJu">图片</h2>
-				<button class="bcd" @click="getTheBloghtml">获取</button>
-				<button class="bcd" @click="bianji">编辑</button>
-				
 				<button class="bc" @click="huoquhtml">保存</button>
 			</div>
 			<div class="text-div" v-show="gongju == 2">
@@ -61,7 +58,7 @@
 		
 		<div id="save">
 			<div id="isbotton" @click="touchstart" ref="isdiv"><!-- 编辑区 -->
-			
+			<!-- {{edithtml}} -->
 			<!-- <input type="text" name="isinput" value="默认值" v-on:click.stop="maha" style="font-size: 28px; position: absolute; left: 222px; top: 222px; width: 100px; height: 100px;"> -->
 			<!-- <input type="text" class="little-input"/> -->
 			<!-- {{isOk}} -->
@@ -96,12 +93,10 @@
 				imgopaqueSize:0.1,//图片透明频度
 				imgmovesize:1,//图片移动大小频度
 				savehtml:null,
+				edithtml:'',//获取到之前保存的
 			}
 		}, 
 		methods:{
-			bianji(){
-				this.$router.push('editblog');
-			},
 			huoquhtml(){
 				// console.log(document.getElementById("isbotton").Element);
 				// console.log(document.getElementById("isbotton").innerHTML);
@@ -120,18 +115,10 @@
 						"Content-Type": "multipart/form-data"
 					 },
 					withCredentials:true,
-					data:document.getElementById("isbotton").innerHTML
+					data:document.getElementById("save").innerHTML
 					}).then((res)=>{
 						console.log(res);
 				    });
-			},
-			getTheBloghtml(){
-				console.log('1');
-				getTheBlog().then(res =>{
-					console.log('2');
-					console.log(res);
-					console.log('3');
-				})
 			},
 			addphtimg(){ 
 			  var that=this
@@ -286,6 +273,14 @@
 			heightAdd(){
 				
 			}
+		},
+		created(){
+			getTheBlog().then(res =>{
+				console.log(res);
+				var testdiv = document.getElementById("isbotton");
+				testdiv.innerHTML = res;
+				// this.edithtml = res;
+			})
 		}
 	} 
 </script>
