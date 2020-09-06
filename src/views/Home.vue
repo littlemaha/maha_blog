@@ -2,7 +2,9 @@
 	<div>
 		<div class="is-top"><!-- 工具栏 -->
 			<div class="gong-ju-lan">
+				<!-- <div class="cx"></div> -->
 				<h2 class="big-blog" @click="WenZiGongJu">文字</h2>
+				<h2 class="big-blog" @click="WenZiGongJu2">文字2</h2>
 				<h2 class="big-blog" @click="ImgGongJu">图片</h2>
 				<button class="bcd" @click="getTheBloghtml">获取</button>
 				<button class="bcd" @click="bianji">编辑</button>
@@ -16,7 +18,7 @@
 				<button @click="textColor">红</button>
 			</div>
 			
-			<div class="img-div" v-show="gongju == 3">
+			<div class="img-div" v-show="gongju == 3 || gongju == 4">
 				<div>
 					<div class="new-img-begin-div"><input class="new-img-begin-input"   type="file" @change="addphtimg()" ref="pubActiImg"></div>
 					<div class="new-img-ok-div" ><img class="new-img-ok-div-img" :src="cover" /></div>
@@ -77,6 +79,7 @@
 <script>
 	import axios from 'axios';
 	import {getTheBlog} from '../network/blog.js';
+	import {Newline} from '../store/inputNewline.js';
 	// import BScroll from './bscroll';
 	// import bian from '../store/bian.vue';
 	export default {
@@ -96,8 +99,12 @@
 				imgopaqueSize:0.1,//图片透明频度
 				imgmovesize:1,//图片移动大小频度
 				savehtml:null,
+				pm:document.body.clientWidth,//屏幕宽
 			}
-		}, 
+		},
+		 created(){
+			console.log(this.pm); 
+		 },
 		methods:{
 			bianji(){
 				this.$router.push('editblog');
@@ -159,13 +166,14 @@
 			  this.isImgYin = true;
 			},
 			touchstart(e){
+				console.log('点击了');
 				console.log(this.gongju);
 				// console.log(e.offsetX + ' ' + e.offsetY);
 				// console.log(e.layerX + ' ' + e.layerY);
 				// console.log(e.screenX + ' ' + e.screenY);
 				console.log(e.pageX + ' ' + e.pageY);
-				this.isX = e.pageX;
-				this.isY = e.pageY;  
+				window.isX = e.pageX;
+				window.isY = e.pageY;  
 				if(this.gongju == 1){
 					console.log('ok');
 					var div = document.createElement('div');//生成新div
@@ -182,20 +190,46 @@
 					console.log('第一次')
 					var input = document.createElement('input');
 					input.setAttribute('type' , 'text');//设置input类型
-					input.setAttribute('name' , 'isinput');//设置input name
+					input.setAttribute('name' , window.isX);//保存y坐标
+					// input.setAttribute('name' , 'isinput');//设置input name
 					input.setAttribute('value' , '');//设置input value
-					input.setAttribute('id' , Math.random().toString(36).slice(-3));//设置id
-					input.setAttribute('onclick' , "javascript:event.stopPropagation();if(this.value == ''){this.style.width = '0px';}this.style.border = '0px';window.newimgid = this.id;");//阻止事件冒泡
+					input.setAttribute('onfocus' , 'autofocus');
+					var textnewid = Math.random().toString(36).slice(-3);
+					window.textNewId = textnewid;
+					input.setAttribute('id' , textnewid);//设置id
+					input.setAttribute('onclick' , 	`
+						javascript:event.stopPropagation();
+						this.focus();
+						if(this.value == ''){
+							this.style.width = '0px';
+						}
+						this.style.border = '0px';
+						window.newimgid = this.id;
+					`);//阻止事件冒泡
 					// input.setAttribute('onclick' , "javascript:console.log('666');");//阻止事件冒泡
 					// input.setAttribute('onKeyDown' , "this.style.width = '0px';console.log(this.scrollWidth);");//阻止事件冒泡
 					// input.setAttribute('width' , '0px');//设置input类型
 					// input.setAttribute('onKeyDown' , 'if(this.value.length>this.size)this.size=this.value.length+2;');//设置input value
 					// input.setAttribute('onKeyDown' , "this.style.width='10px';this.style.width = this.scrollWidth+28 + 'px'");
 				    	// input.setAttribute('onKeyDown' , "console.log('1  '+this.value);this.style.width='0px';if(this.value == '1313'){this.style.width = '0px';}else{console.log('2  '+this.value.length);this.style.width = this.scrollWidth+28 + 'px';console.log('3  '+this.value.length);}console.log('4  '+this.value.length);");
-				    	input.setAttribute('onkeyup' , "console.log(window.textSize);console.log('maha');this.style.width='10px';this.style.width = this.scrollWidth + 'px';window.newimgid = this.id;document.getElementById(window.newimgid).setAttribute('value',this.value); console.log(this.value);");
+				    input.setAttribute('onkeyup' , `
+						
+						console.log(window.textSize);
+						console.log('maha');
+						this.style.width='10px';
+						this.style.width = this.scrollWidth + 'px';
+						window.newimgid = this.id;
+						document.getElementById(window.newimgid).setAttribute('value',this.value);
+						console.log(Number(this.style.width.split('px')[0])+Number(this.name));
+						console.log(this.name); 
+						if(Number(this.style.width.split('px')[0])+Number(this.name) + 20 >document.body.clientWidth){
+							// console.log('大了大了');
+							// Newline();
+						}
+					`);
 
 
-					input.style = "border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + this.isX+ "px;top: " + this.isY +"px;background-color:transparent;height: "+window.textSize+"px;"//设置样式
+					input.style = "border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;background-color:transparent;height: "+window.textSize+"px;"//设置样式
 					 
 					var bo = document.getElementById('isbotton'); //获取 父 对象.
 					//将div动态插入到父对象中
@@ -212,15 +246,33 @@
 					// console.log(this.newimgid);
 					img.setAttribute('id' , Math.random().toString(36).slice(-3));//设置id
 					img.setAttribute('onclick' , "javascript:event.stopPropagation();window.newimgid = this.id;");//阻止事件冒泡
-					img.style = "opacity: 1;"+"border:1px solid red;width:80px; position: absolute;left: " + this.isX+ "px;top: " + this.isY +"px;";//设置样式
+					img.style = "opacity: 1;"+"border:1px solid red;width:80px; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;";//设置样式
 					var bo = document.getElementById('isbotton'); //获取 父 对象.
 					//将div动态插入到父对象中
 					bo.insertBefore(img, bo.lastChild);
 					// this.newimg = document.getElementById('isbotton');
 				}
+				if(this.gongju == 4){
+					console.log('12123');
+					var textarea = document.createElement('textarea');
+					var textnewid = Math.random().toString(36).slice(-3);
+					window.newimgid = textnewid;
+					textarea.setAttribute('id' , textnewid);//设置id
+					textarea.setAttribute('onclick' , 	`
+						javascript:event.stopPropagation();
+						
+					`);//阻止事件冒泡
+					textarea.style = "border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;background-color:transparent;width:200px;"//设置样式
+					var bo = document.getElementById('isbotton'); //获取 父 对象.
+					//将div动态插入到父对象中
+					bo.insertBefore(textarea, bo.lastChild);
+				}
 			},
 			WenZiGongJu(){
 				this.gongju = 2;
+			},
+			WenZiGongJu2(){
+				this.gongju = 4;
 			},
 			ImgGongJu(){
 				this.gongju = 3;
@@ -245,7 +297,7 @@
 				// console.log(document.getElementById(window.newimgid));
 			},
 			imgAdd(){
-				// console.log(document.getElementById(window.newimgid).style.width.match(/(\S*)px/)[1]);
+				console.log(document.getElementById(window.newimgid).style.width.match(/(\S*)px/)[1]);
 				// document.getElementById(window.newimgid).style.width="200px";
 				document.getElementById(window.newimgid).style.width=String(Number(document.getElementById(window.newimgid).style.width.match(/(\S*)px/)[1])+1)+"px";
 			},
@@ -291,6 +343,11 @@
 </script>
  
 <style>
+	/* .cx{
+		border: 1px red solid;
+		width: 100px;
+		height: 44px;
+	} */
 	.gong-ju-lan {
 		border: 1px green solid;
 	}
