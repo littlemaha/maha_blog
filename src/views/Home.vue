@@ -6,6 +6,7 @@
 				<h2 class="big-blog" @click="WenZiGongJu">文字</h2>
 				<h2 class="big-blog" @click="WenZiGongJu2">文字2</h2>
 				<h2 class="big-blog" @click="ImgGongJu">图片</h2>
+				<button class="bcd" @click="getTheBloghtmltext">保存文本域</button>
 				<button class="bcd" @click="getTheBloghtml">获取</button>
 				<button class="bcd" @click="bianji">编辑</button>
 				
@@ -86,7 +87,7 @@
 		data(){
 			return {
 				gongju: 0,	//默认0, 1:div
-				
+				textarea:'',
 				isX: 0,//x坐标
 				isY: 0,//y坐标
 				// isDivList: [1,2],
@@ -127,7 +128,8 @@
 						"Content-Type": "multipart/form-data"
 					 },
 					withCredentials:true,
-					data:document.getElementById("isbotton").innerHTML
+					// data:document.getElementById("isbotton").innerHTML
+					data:this.a
 					}).then((res)=>{
 						console.log(res);
 				    });
@@ -139,6 +141,9 @@
 					console.log(res);
 					console.log('3');
 				})
+			},
+			getTheBloghtmltext(){//保存文本域的编辑
+				document.getElementById(window.newimgid).innerHTML = document.getElementById(window.newimgid).value.replace(/[\r\n]/g,"maha");
 			},
 			addphtimg(){ 
 			  var that=this
@@ -258,11 +263,29 @@
 					var textnewid = Math.random().toString(36).slice(-3);
 					window.newimgid = textnewid;
 					textarea.setAttribute('id' , textnewid);//设置id
+					textarea.setAttribute('value' , ' ');//设置id
+					textarea.setAttribute('rows' , 2);//设置id
+					textarea.setAttribute('name' , window.isX);//保存y坐标
+					textarea.setAttribute('wrap' , 'physical');//保存y坐标
+
 					textarea.setAttribute('onclick' , 	`
 						javascript:event.stopPropagation();
-						
 					`);//阻止事件冒泡
-					textarea.style = "border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;background-color:transparent;width:200px;"//设置样式
+					textarea.setAttribute('onkeyup' , `
+					console.log('ma');
+					console.log(document.getElementById(window.newimgid).innerHTML);
+					console.log(document.getElementById(window.newimgid).value);
+					document.getElementById(window.newimgid).innerHTML = document.getElementById(window.newimgid).value;
+						console.log(document.getElementById(window.newimgid).innerHTML);
+						console.log('ha');
+						console.log(this.rows);
+						this.rows = 8;
+						console.log('1111');
+						console.log(this.innerHTML);
+						console.log('2222');
+					`);
+					
+					textarea.style = "WORD-BREAK:break-all;border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;background-color:transparent;width:200px"//设置样式
 					var bo = document.getElementById('isbotton'); //获取 父 对象.
 					//将div动态插入到父对象中
 					bo.insertBefore(textarea, bo.lastChild);

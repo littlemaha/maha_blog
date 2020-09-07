@@ -22,23 +22,41 @@ new Vue({
 			console.log("kais")
 			
 			console.log("jieshu");
-			if(Number(document.getElementById(window.newimgid).style.width.split('px')[0])+window.isX + 20 >document.body.clientWidth){
+			
+			console.log(e.pageY);
+			console.log('按下');
+           var currKey=0,e=e||event; 
+		   
+		   
+
+           currKey=e.keyCode||e.which||e.charCode;//支持IE、FF 
+			if(Number(document.getElementById(window.newimgid).style.width.split('px')[0])+window.isX + 20 >document.body.clientWidth  && currKey != 8){
 				document.getElementById(window.newimgid).onfocus = 666;
 				// document.getElementById(window.newimgid).setAttribute('onfocus' , 'this.blur();');
 				addinput2();
 				document.getElementById(window.textNewId).focus();
 				// isis();
 			}
-			console.log(e.pageY);
-			console.log('按下');
-           var currKey=0,e=e||event; 
-
-           currKey=e.keyCode||e.which||e.charCode;//支持IE、FF 
-			
            if (currKey == 13){
-				addinput2();
-				
-           }
+			   // console.log("回车");
+			   // if(document.getElementById(window.newimgid).innerHTML == ''){
+				  // document.getElementById(window.newimgid).innerHTML=document.getElementById(window.newimgid).innerHTML+"maha";
+			   // }else{
+				   
+				  //  console.log(document.getElementById(window.newimgid).innerHTML);
+				  //  console.log(document.getElementById(window.newimgid).innerHTML.substr(document.getElementById(window.newimgid).innerHTML.length-4));
+				  //  if(document.getElementById(window.newimgid).innerHTML.substr(document.getElementById(window.newimgid).innerHTML.length-4)=="maha"){
+					 //   document.getElementById(window.newimgid).innerHTML=document.getElementById(window.newimgid).innerHTML+"maha";
+					 //   console.log(document.getElementById(window.newimgid).innerHTML);
+				  //  }else{
+					   
+				  //  }
+			   // }
+			   // document.getElementById(window.newimgid).innerHTML=document.getElementById(window.newimgid).innerHTML+"maha";
+				// addinput2();
+           } else {
+			   // document.getElementById(window.newimgid).innerHTML = 
+		   }
 
         }
 		
