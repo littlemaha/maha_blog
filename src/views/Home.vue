@@ -2,24 +2,48 @@
 	<div>
 		<div class="is-top"><!-- 工具栏 -->
 			<div class="gong-ju-lan">
-				<!-- <div class="cx"></div> -->
-				<h2 class="big-blog" @click="WenZiGongJu">文字</h2>
-				<h2 class="big-blog" @click="WenZiGongJu2">文字2</h2>
-				<h2 class="big-blog" @click="ImgGongJu">图片</h2>
+				<h2 class="big-blog" @click="inputToll">文字</h2>
+				<h2 class="big-blog" @click="textareaToll">文字2</h2>
+				<h2 class="big-blog" @click="imgToll">图片</h2>
 				<button class="bcd" @click="getTheBloghtmltext">保存文本域</button>
 				<button class="bcd" @click="getTheBloghtml">获取</button>
-				<button class="bcd" @click="bianji">编辑</button>
-				
+				<button class="bcd" @click="editblog">编辑</button>
 				<button class="bc" @click="huoquhtml">保存</button>
 			</div>
-			<div class="text-div" v-show="gongju == 2">
-				<button @click="textAdd">大</button>
+			
+			<div class="text-div" v-show="tool == 1">
+				<button @click="textSizeAdd">大</button>
 				<span v-bind:style="{fontSize:textSize + 'px',color:textcolor}">{{textSize}}</span>
-				<button @click="textSub">小</button>
+				<button @click="textSizeSub">小</button>
 				<button @click="textColor">红</button>
 			</div>
-			
-			<div class="img-div" v-show="gongju == 3 || gongju == 4">
+			<div class="img-div" v-show="tool == 2">
+				<div class="img-blog">
+					<div class="img-flog-s">
+						<div class="img-big-sim"><button @click="imgAdd">变宽</button></div>
+						<div class="img-big-sim"><button @click="imgSub">变窄</button></div>
+					</div>
+					<div class="img-flog-s">
+						<button @click="textandimgmovesizeAdd">宽度变化+</button>
+						{{textandimgmovesize}}
+						<button @click="textandimgmovesizeSub">宽度变化-</button>
+					</div>
+					<div class="img-flog-s">
+						<div class="img-move">
+							<button @click="imgmovesizeAdd">移动变化+</button>
+							{{imgmovesize}}
+							<button @click="imgmovesizeSub">移动变化-</button>
+						</div>
+						<div  class="img-move">
+							<button @click="imgS">上</button>
+							<button @click="imgX">下</button>
+							<button @click="imgZ">左</button>
+							<button @click="imgY">右</button>
+						</div>
+					</div>	
+				</div>
+			</div>
+			<div class="img-div" v-show="tool == 3">
 				<div>
 					<div class="new-img-begin-div"><input class="new-img-begin-input"   type="file" @change="addphtimg()" ref="pubActiImg"></div>
 					<div class="new-img-ok-div" ><img class="new-img-ok-div-img" :src="cover" /></div>
@@ -29,6 +53,11 @@
 					<div class="img-flog-s">
 						<div class="img-big-sim"><button @click="imgAdd">图大</button></div>
 						<div class="img-big-sim"><button @click="imgSub">图小</button></div>
+					</div>
+					<div class="img-flog-s">
+						<button @click="textandimgmovesizeAdd">框变大小+</button>
+						{{textandimgmovesize}}
+						<button @click="textandimgmovesizeSub">框变大小-</button>
 					</div>
 					<div class="img-flog-s">
 						<div class="img-move">
@@ -60,6 +89,11 @@
 				
 				
 			</div>
+			
+			
+			
+			
+
 		</div>
 		
 		<div id="save">
@@ -86,7 +120,7 @@
 	export default {
 		data(){
 			return {
-				gongju: 0,	//默认0, 1:div
+				tool: window.tool,	//所选工具 
 				textarea:'',
 				isX: 0,//x坐标
 				isY: 0,//y坐标
@@ -99,6 +133,7 @@
 				newimgid:'',//图片id
 				imgopaqueSize:0.1,//图片透明频度
 				imgmovesize:1,//图片移动大小频度
+				textandimgmovesize:1,//文本域和图片移动大小频度
 				savehtml:null,
 				pm:document.body.clientWidth,//屏幕宽
 			}
@@ -107,7 +142,7 @@
 			console.log(this.pm); 
 		 },
 		methods:{
-			bianji(){
+			editblog(){
 				this.$router.push('editblog');
 			},
 			huoquhtml(){
@@ -128,8 +163,7 @@
 						"Content-Type": "multipart/form-data"
 					 },
 					withCredentials:true,
-					// data:document.getElementById("isbotton").innerHTML
-					data:this.a
+					data:document.getElementById("isbotton").innerHTML
 					}).then((res)=>{
 						console.log(res);
 				    });
@@ -143,7 +177,7 @@
 				})
 			},
 			getTheBloghtmltext(){//保存文本域的编辑
-				document.getElementById(window.newimgid).innerHTML = document.getElementById(window.newimgid).value.replace(/[\r\n]/g,"maha");
+				document.getElementById(window.nowid).innerHTML = document.getElementById(window.nowid).value.replace(/[\r\n]/g,"maha");
 			},
 			addphtimg(){ 
 			  var that=this
@@ -171,15 +205,84 @@
 			  this.isImgYin = true;
 			},
 			touchstart(e){
-				console.log('点击了');
-				console.log(this.gongju);
-				// console.log(e.offsetX + ' ' + e.offsetY);
-				// console.log(e.layerX + ' ' + e.layerY);
-				// console.log(e.screenX + ' ' + e.screenY);
-				console.log(e.pageX + ' ' + e.pageY);
 				window.isX = e.pageX;
 				window.isY = e.pageY;  
-				if(this.gongju == 1){
+				if(window.tool == 1){//input输入
+					var input = document.createElement('input');
+					input.setAttribute('type' , 'text');//设置input类型
+					input.setAttribute('name' , window.isX);//保存x坐标
+					input.setAttribute('value' , '');//设置input value
+					input.setAttribute('onfocus' , 'autofocus');
+					var textnewid = Math.random().toString(36).slice(-3);
+					window.nowid = textnewid;
+					input.setAttribute('id' , textnewid);//设置id
+					input.setAttribute('onclick' , 	`
+						javascript:event.stopPropagation();
+						this.focus();
+						if(this.value == ''){
+							this.style.width = '0px';
+						}
+						
+						this.style.border = '0px';
+						window.nowid = this.id;
+						window.isY = Number(this.style.top.split('px')[0]);
+					`);//阻止事件冒泡
+				    input.setAttribute('onkeyup' , `
+						this.style.width='10px';
+						this.style.width = this.scrollWidth + 'px';
+						window.nowid = this.id;
+						document.getElementById(window.nowid).setAttribute('value',this.value);
+					`);
+					input.style = "border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;background-color:transparent;height: "+window.textSize+"px;"//设置样式
+					var bo = document.getElementById('isbotton'); //获取 父 对象.
+					//将div动态插入到父对象中
+					bo.insertBefore(input, bo.lastChild);
+				}
+				if(window.tool == 2){//文本域输入
+					var textarea = document.createElement('textarea');
+					var textnewid = Math.random().toString(36).slice(-3);
+					window.nowid = textnewid;
+					textarea.setAttribute('id' , textnewid);//设置id
+					textarea.setAttribute('value' , ' ');//
+					textarea.setAttribute('rows' , 2);//默认刚开始两行
+					textarea.setAttribute('name' , window.isX);//保存x坐标
+					textarea.setAttribute('wrap' , 'physical');//
+				
+					textarea.setAttribute('onclick' , 	`
+						javascript:event.stopPropagation();
+						window.nowid = this.id;
+					`);//阻止事件冒泡
+					textarea.setAttribute('onkeyup' , `
+					// document.getElementById(window.nowid).innerHTML = document.getElementById(window.nowid).value;
+					//1 上面可能没必要
+					//2 没实现自动高度
+					this.rows = 6;
+					`);
+					
+					textarea.style = "WORD-BREAK:break-all;border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;background-color:transparent;width:200px"//设置样式
+					var bo = document.getElementById('isbotton'); //获取 父 对象.
+					//将div动态插入到父对象中
+					bo.insertBefore(textarea, bo.lastChild);
+				}
+				if(window.tool == 3){//编辑图片
+					console.log('img');
+					var img = document.createElement('img');
+					img.setAttribute('src' , this.cover);//将上传的图片给img
+					// img.setAttribute('width' , '400px');//默认宽
+					// this.newimgid = Math.random().toString(36).slice(-3);//生成随机id
+					// window.newimgid = Math.random().toString(36).slice(-3);//生成随机id
+					// console.log(this.newimgid);
+					var textnewid = Math.random().toString(36).slice(-3);
+					window.nowid = textnewid;
+					img.setAttribute('id' , textnewid);//设置id
+					img.setAttribute('onclick' , "javascript:event.stopPropagation();window.nowid = this.id;");//阻止事件冒泡
+					img.style = "opacity: 1;"+"border:1px solid red;width:80px; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;";//设置样式
+					var bo = document.getElementById('isbotton'); //获取 父 对象.
+					//将div动态插入到父对象中
+					bo.insertBefore(img, bo.lastChild);
+					// this.newimg = document.getElementById('isbotton');
+				}
+				if(window.tool == 8){
 					console.log('ok');
 					var div = document.createElement('div');//生成新div
 					div.setAttribute('onclick' , "javascript:event.stopPropagation();");//阻止事件冒泡
@@ -190,167 +293,75 @@
 					var bo = document.getElementById('isbotton'); //获取 父 对象.
 					//将div动态插入到父对象中
 					bo.insertBefore(div, bo.lastChild);
-				}
-				if(this.gongju == 2){ 
-					console.log('第一次')
-					var input = document.createElement('input');
-					input.setAttribute('type' , 'text');//设置input类型
-					input.setAttribute('name' , window.isX);//保存y坐标
-					// input.setAttribute('name' , 'isinput');//设置input name
-					input.setAttribute('value' , '');//设置input value
-					input.setAttribute('onfocus' , 'autofocus');
-					var textnewid = Math.random().toString(36).slice(-3);
-					window.textNewId = textnewid;
-					input.setAttribute('id' , textnewid);//设置id
-					input.setAttribute('onclick' , 	`
-						javascript:event.stopPropagation();
-						this.focus();
-						if(this.value == ''){
-							this.style.width = '0px';
-						}
-						this.style.border = '0px';
-						window.newimgid = this.id;
-					`);//阻止事件冒泡
-					// input.setAttribute('onclick' , "javascript:console.log('666');");//阻止事件冒泡
-					// input.setAttribute('onKeyDown' , "this.style.width = '0px';console.log(this.scrollWidth);");//阻止事件冒泡
-					// input.setAttribute('width' , '0px');//设置input类型
-					// input.setAttribute('onKeyDown' , 'if(this.value.length>this.size)this.size=this.value.length+2;');//设置input value
-					// input.setAttribute('onKeyDown' , "this.style.width='10px';this.style.width = this.scrollWidth+28 + 'px'");
-				    	// input.setAttribute('onKeyDown' , "console.log('1  '+this.value);this.style.width='0px';if(this.value == '1313'){this.style.width = '0px';}else{console.log('2  '+this.value.length);this.style.width = this.scrollWidth+28 + 'px';console.log('3  '+this.value.length);}console.log('4  '+this.value.length);");
-				    input.setAttribute('onkeyup' , `
-						
-						console.log(window.textSize);
-						console.log('maha');
-						this.style.width='10px';
-						this.style.width = this.scrollWidth + 'px';
-						window.newimgid = this.id;
-						document.getElementById(window.newimgid).setAttribute('value',this.value);
-						console.log(Number(this.style.width.split('px')[0])+Number(this.name));
-						console.log(this.name); 
-						if(Number(this.style.width.split('px')[0])+Number(this.name) + 20 >document.body.clientWidth){
-							// console.log('大了大了');
-							// Newline();
-						}
-					`);
-
-
-					input.style = "border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;background-color:transparent;height: "+window.textSize+"px;"//设置样式
-					 
-					var bo = document.getElementById('isbotton'); //获取 父 对象.
-					//将div动态插入到父对象中
-					bo.insertBefore(input, bo.lastChild);
-				}
-				if(this.gongju == 3){
-					// window.imgopaque = this.imgopaque;
-					console.log('img');
-					var img = document.createElement('img');
-					img.setAttribute('src' , this.cover);//将上传的图片给img
-					// img.setAttribute('width' , '400px');//默认宽
-					// this.newimgid = Math.random().toString(36).slice(-3);//生成随机id
-					// window.newimgid = Math.random().toString(36).slice(-3);//生成随机id
-					// console.log(this.newimgid);
-					img.setAttribute('id' , Math.random().toString(36).slice(-3));//设置id
-					img.setAttribute('onclick' , "javascript:event.stopPropagation();window.newimgid = this.id;");//阻止事件冒泡
-					img.style = "opacity: 1;"+"border:1px solid red;width:80px; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;";//设置样式
-					var bo = document.getElementById('isbotton'); //获取 父 对象.
-					//将div动态插入到父对象中
-					bo.insertBefore(img, bo.lastChild);
-					// this.newimg = document.getElementById('isbotton');
-				}
-				if(this.gongju == 4){
-					console.log('12123');
-					var textarea = document.createElement('textarea');
-					var textnewid = Math.random().toString(36).slice(-3);
-					window.newimgid = textnewid;
-					textarea.setAttribute('id' , textnewid);//设置id
-					textarea.setAttribute('value' , ' ');//设置id
-					textarea.setAttribute('rows' , 2);//设置id
-					textarea.setAttribute('name' , window.isX);//保存y坐标
-					textarea.setAttribute('wrap' , 'physical');//保存y坐标
-
-					textarea.setAttribute('onclick' , 	`
-						javascript:event.stopPropagation();
-					`);//阻止事件冒泡
-					textarea.setAttribute('onkeyup' , `
-					console.log('ma');
-					console.log(document.getElementById(window.newimgid).innerHTML);
-					console.log(document.getElementById(window.newimgid).value);
-					document.getElementById(window.newimgid).innerHTML = document.getElementById(window.newimgid).value;
-						console.log(document.getElementById(window.newimgid).innerHTML);
-						console.log('ha');
-						console.log(this.rows);
-						this.rows = 8;
-						console.log('1111');
-						console.log(this.innerHTML);
-						console.log('2222');
-					`);
-					
-					textarea.style = "WORD-BREAK:break-all;border:solid red 1px;font-size: "+window.textSize+"px; color:"+window.textColor+"; position: absolute;left: " + window.isX+ "px;top: " + window.isY +"px;background-color:transparent;width:200px"//设置样式
-					var bo = document.getElementById('isbotton'); //获取 父 对象.
-					//将div动态插入到父对象中
-					bo.insertBefore(textarea, bo.lastChild);
-				}
+				}	
 			},
-			WenZiGongJu(){
-				this.gongju = 2;
+			inputToll(){//当前工具为input编辑
+				window.tool = 1;
+				this.tool = 1;
 			},
-			WenZiGongJu2(){
-				this.gongju = 4;
+			textareaToll(){//当前工具为文本域编辑
+				window.tool = 2;
+				this.tool = 2;
 			},
-			ImgGongJu(){
-				this.gongju = 3;
+			imgToll(){//当前工具为图片编辑
+				window.tool = 3;
+				this.tool = 3;
 			},
 			maha(){
 				console.log('触发了马哈')
 			},
-			textAdd(){
+			textSizeAdd(){//让新
 				this.textSize++;
-				// this.Bian.textSize++;
 				window.textSize++;
 			},
-			textSub(){
+			textSizeSub(){//让新的字体
 				this.textSize--;
-				// this.Bian.textSize--;
 				window.textSize--;
 			},
 			textColor(){
 				window.textColor = 'red'; 
 				this.textcolor = 'red';
-				document.getElementById(window.newimgid).style.color = window.textColor;
+				document.getElementById(window.nowid).style.color = window.textColor;
 				// console.log(document.getElementById(window.newimgid));
 			},
 			imgAdd(){
-				console.log(document.getElementById(window.newimgid).style.width.match(/(\S*)px/)[1]);
+				console.log(document.getElementById(window.nowid).style.width.match(/(\S*)px/)[1]);
 				// document.getElementById(window.newimgid).style.width="200px";
-				document.getElementById(window.newimgid).style.width=String(Number(document.getElementById(window.newimgid).style.width.match(/(\S*)px/)[1])+1)+"px";
+				document.getElementById(window.nowid).style.width=String(Number(document.getElementById(window.nowid).style.width.match(/(\S*)px/)[1])+this.textandimgmovesize)+"px";
 			},
 			imgSub(){
-				document.getElementById(window.newimgid).style.width=String(Number(document.getElementById(window.newimgid).style.width.match(/(\S*)px/)[1])-1)+"px";
+				document.getElementById(window.nowid).style.width=String(Number(document.getElementById(window.nowid).style.width.match(/(\S*)px/)[1])-this.textandimgmovesize)+"px";
 			},
 			imgS(){
-				document.getElementById(window.newimgid).style.top=String(Number(document.getElementById(window.newimgid).style.top.match(/(\S*)px/)[1])-this.imgmovesize)+"px";
+				document.getElementById(window.nowid).style.top=String(Number(document.getElementById(window.nowid).style.top.match(/(\S*)px/)[1])-this.imgmovesize)+"px";
 			},
 			imgX(){
 				// var a =this.imgmovesize;
-				document.getElementById(window.newimgid).style.top=String(Number(document.getElementById(window.newimgid).style.top.match(/(\S*)px/)[1])+this.imgmovesize)+"px";
+				document.getElementById(window.nowid).style.top=String(Number(document.getElementById(window.nowid).style.top.match(/(\S*)px/)[1])+this.imgmovesize)+"px";
 			},
 			imgZ(){
-				document.getElementById(window.newimgid).style.left=String(Number(document.getElementById(window.newimgid).style.left.match(/(\S*)px/)[1])-this.imgmovesize)+"px";
+				document.getElementById(window.nowid).style.left=String(Number(document.getElementById(window.nowid).style.left.match(/(\S*)px/)[1])-this.imgmovesize)+"px";
 			},
 			imgY(){
-				document.getElementById(window.newimgid).style.left=String(Number(document.getElementById(window.newimgid).style.left.match(/(\S*)px/)[1])+this.imgmovesize)+"px";
+				document.getElementById(window.nowid).style.left=String(Number(document.getElementById(window.nowid).style.left.match(/(\S*)px/)[1])+this.imgmovesize)+"px";
 			},
 			imgopaqueAdd(){
-				document.getElementById(window.newimgid).style.opacity=Number(document.getElementById(window.newimgid).style.opacity)-this.imgopaqueSize;
+				document.getElementById(window.nowid).style.opacity=Number(document.getElementById(window.nowid).style.opacity)-this.imgopaqueSize;
 			},
 			imgopaqueSub(){
-				document.getElementById(window.newimgid).style.opacity=Number(document.getElementById(window.newimgid).style.opacity)+this.imgopaqueSize;
+				document.getElementById(window.nowid).style.opacity=Number(document.getElementById(window.nowid).style.opacity)+this.imgopaqueSize;
 			},
 			imgmovesizeAdd(){
 				this.imgmovesize++;
 			},
 			imgmovesizeSub(){
 				this.imgmovesize--;
+			},
+			textandimgmovesizeAdd(){
+				this.textandimgmovesize++;
+			},
+			textandimgmovesizeSub(){
+				this.textandimgmovesize--;
 			},
 			imgopaqueSizeAdd(){
 				this.imgopaqueSize = this.imgopaqueSize + 0.1;

@@ -30,11 +30,11 @@ new Vue({
 		   
 
            currKey=e.keyCode||e.which||e.charCode;//支持IE、FF 
-			if(Number(document.getElementById(window.newimgid).style.width.split('px')[0])+window.isX + 20 >document.body.clientWidth  && currKey != 8){
-				document.getElementById(window.newimgid).onfocus = 666;
+			if(Number(document.getElementById(window.nowid).style.width.split('px')[0])+Number(document.getElementById(window.nowid).name) + 20 >document.body.clientWidth  && currKey != 8){
+				document.getElementById(window.nowid).onfocus = 666;
 				// document.getElementById(window.newimgid).setAttribute('onfocus' , 'this.blur();');
 				addinput2();
-				document.getElementById(window.textNewId).focus();
+				document.getElementById(window.nowid).focus();
 				// isis();
 			}
            if (currKey == 13){
@@ -65,11 +65,11 @@ new Vue({
 			console.log('回车');
 			var input = document.createElement('input');
 			input.setAttribute('type' , 'text');//设置input类型
-			input.setAttribute('name' , window.isX);//设置input类型
+			input.setAttribute('name' , 18);//设置input类型
 			// input.setAttribute('name' , 'isinput');//设置input name
 			input.setAttribute('value' , '');//设置input value
 			var textnewid = Math.random().toString(36).slice(-3);
-			window.textNewId = textnewid;
+			window.nowid = textnewid;
 			input.setAttribute('id' , textnewid);//设置id
 			input.setAttribute('onclick' , 	`
 				javascript:event.stopPropagation();
@@ -77,8 +77,9 @@ new Vue({
 				if(this.value == ''){
 					this.style.width = '0px';
 				}
+				window.nowid = this.id;
+				window.isY = Number(this.style.top.split('px')[0]);
 				this.style.border = '0px';
-				window.newimgid = this.id;
 			`);//阻止事件冒泡
 			// input.setAttribute('onclick' , "javascript:console.log('666');");//阻止事件冒泡
 			// input.setAttribute('onKeyDown' , "this.style.width = '0px';console.log(this.scrollWidth);");//阻止事件冒泡
@@ -92,8 +93,8 @@ new Vue({
 				console.log('maha');
 				this.style.width='10px';
 				this.style.width = this.scrollWidth + 'px';
-				window.newimgid = this.id;
-				document.getElementById(window.newimgid).setAttribute('value',this.value);
+				window.nowid = this.id;
+				document.getElementById(window.nowid).setAttribute('value',this.value);
 				console.log(Number(this.style.width.split('px')[0])+Number(this.name));
 				console.log(this.name); 
 				console.log('A'); 

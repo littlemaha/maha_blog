@@ -10,7 +10,7 @@ export function request(config) {
     // baseURL:'http://192.168.1.3:8080/test1',
     baseURL:'http://maha-pc:8086/maha_blog/servlet',
 	// 登录
-    timeout:5000
+    timeout:50000
   })
 
   // 2.axios的拦截器
